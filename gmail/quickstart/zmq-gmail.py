@@ -64,7 +64,10 @@ def main():
         ctx = zmq.Context()
         sock = ctx.socket(zmq.SUB)
         sock.connect(zmq_constants.constants().zmq_events_addr)
-        sock.setsockopt_string(zmq.SUBSCRIBE, zmq_constants.constants().zmq_buy_filter)
+        try:
+            sock.setsockopt_string(zmq.SUBSCRIBE, zmq_constants.constants().zmq_buy_filter.encode())
+        except:
+            sock.setsockopt(zmq.SUBSCRIBE, zmq_constants.constants().zmq_buy_filter.encode())
 
         while True:
             try:
@@ -80,7 +83,10 @@ def main():
         ctx = zmq.Context()
         sock = ctx.socket(zmq.SUB)
         sock.connect(zmq_constants.constants().zmq_events_addr)
-        sock.setsockopt_string(zmq.SUBSCRIBE, zmq_constants.constants().zmq_sell_filter)
+        try:
+            sock.setsockopt_string(zmq.SUBSCRIBE, zmq_constants.constants().zmq_sell_filter.encode())
+        except:
+            sock.setsockopt(zmq.SUBSCRIBE, zmq_constants.constants().zmq_sell_filter.encode())
 
         while True:
             try:
