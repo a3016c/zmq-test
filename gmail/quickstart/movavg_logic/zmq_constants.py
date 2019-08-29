@@ -9,7 +9,7 @@ class constants():
         self.SELL_SEARCH = 'added to 2Mov2Lines_Sell'
         self.unread_message = 'UNREAD'
         self.client_id = 3016
-        self.size = 1
+        self.standard_size = 1
         self.host = 'localhost'
         self.account = 'DU1314277'
         self.port = 7496
