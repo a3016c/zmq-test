@@ -56,7 +56,12 @@ class server():
         while True:
             # Check your email from UNREAD label
             print('Trying to check email now.')
-            mail_return = r_email.read()
+            try:
+                mail_return = r_email.read()
+            except ServerNotFoundError as e:
+                print('Unable to check email')
+                print(e)
+                sys.exit(2)
 
             if mail_return == zmq_constants.constants().unread_message:
                 #print('No unread messages found.Going to sleep...')
@@ -117,8 +122,9 @@ def ibpy(size=1, contractString=None):
 
         # subscribe to account/position updates
         ibConn.requestPositionUpdates(subscribe=True)
-        ibConn.requestAccountUpdates(subscribe=True)
-        time.sleep(3)
+        ibConn.requestPositionUpdates(subscribe=False)
+        #ibConn.requestAccountUpdates(subscribe=True)
+        #time.sleep(3)
 
         active_month = futures.get_active_contract(contractString)
         if contractString in ['CL', 'QM', 'GC']:
@@ -137,8 +143,8 @@ def ibpy(size=1, contractString=None):
             time.sleep(3)
 
         # subscribe to account/position updates
-        ibConn.requestPositionUpdates(subscribe=False)
-        ibConn.requestAccountUpdates(subscribe=False)
+        #ibConn.requestPositionUpdates(subscribe=False)
+        #ibConn.requestAccountUpdates(subscribe=False)
 
         # disconnect
         ibConn.disconnect()
