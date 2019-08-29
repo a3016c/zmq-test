@@ -1,0 +1,6 @@
+#Sell
+MovAvgTwoLines("average type" = "HULL")."fastAvg" crosses below MovAvgTwoLines("average type" = "HULL")."slowAvg"
+
+#Buy
+MovAvgTwoLines("average type" = "HULL")."fastAvg" crosses above MovAvgTwoLines("average type" = "HULL")."slowAvg"
+
