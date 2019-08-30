@@ -1,10 +1,12 @@
 import ezibpy
 import time
 from qtpylib import futures
+
 import zmq_constants
 
 constants = zmq_constants.constants()
 size = constants.standard_size
+
 
 def ibpy(size, contractString):
     """
@@ -31,23 +33,28 @@ def ibpy(size, contractString):
         if contractString in ['CL', 'QM', 'GC']:
             exchange = 'NYMEX'
         contract = ibConn.createFuturesContract(contractString,
-                                                exchange=exchange,
+                                                exchange='GLOBEX',
                                                 expiry=constants.expiry)
         # Get symbol_string
         # e.g. sym value GCQ2019_FUT
         symbol_string = ibConn.contractString(contract)
-        new_size = size
+        position_size = get_position_size(ibConn, symbol_string)
 
-        if check_active_position(ibConn, symbol_string):
-            position_size = get_position_size(ibConn, symbol_string)
-            order = ibConn.createOrder(quantity=-new_size)
+        if position_size != size:
+            # Enter the Closing trade only if previous signal != new signal
+            # If you are already SHORT and new signal is SHORT, there is no need to close existing trade
+
+            if check_active_position(ibConn, symbol_string):
+                order = ibConn.createOrder(quantity=-size)
+                orderId = ibConn.placeOrder(contract, order)
+                time.sleep(3)
+
+            order = ibConn.createOrder(quantity=size)
             orderId = ibConn.placeOrder(contract, order)
             time.sleep(3)
-
-        order = ibConn.createOrder(quantity=new_size)
-        orderId = ibConn.placeOrder(contract, order)
-        time.sleep(3)
-
+        else:
+            # We are already in position
+            print('Already in position for %s, position_size: %s' % (symbol_string, position_size))
         # subscribe to account/position updates
         # ibConn.requestPositionUpdates(subscribe=False)
         # ibConn.requestAccountUpdates(subscribe=False)
@@ -63,10 +70,7 @@ def ibpy(size, contractString):
     return True
 
 
-
-
 def check_active_position(ibConn, symbol_string):
-
     for sym, value in ibConn.positions.items():
         # e.g. sym value GCQ2019_FUT
         # print(sym, '****', value['position'])
@@ -76,9 +80,6 @@ def check_active_position(ibConn, symbol_string):
     print('No active positions for %s' % symbol_string)
     return False
 
+
 def get_position_size(ibConn, symbol_string):
-    for sym, value in ibConn.positions.items():
-        if symbol_string == sym and value['position'] != 0:
-            return int(value['position'])
-        else:
-            return 0
+    return int(ibConn.positions[symbol_string]['position'])

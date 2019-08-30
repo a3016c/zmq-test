@@ -64,7 +64,7 @@ class read_unread_mail():
             with open('token.pickle', 'wb') as token:
                 pickle.dump(creds, token)
 
-        self.service = build('gmail', 'v1', credentials=creds)
+        self.service = build('gmail', 'v1', credentials=creds, cache_discovery=False)
         # Call the Gmail API to fetch INBOX
         results = self.service.users().messages().list(userId=self.userId, labelIds=[self.label]).execute()
         messages = results.get('messages', [])

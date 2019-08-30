@@ -3,10 +3,12 @@ import regex as re
 import sys
 import time
 import zmq
+import logging
 from trader import ibpy
 
 import zmq_constants
 from read_email import read_unread_mail
+logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.WARNING)
 
 # our local zeromq endpoints
 zmq_events_addr = 'tcp://127.0.0.1:8008'
@@ -79,13 +81,11 @@ class server():
                                     contractString = _eachcontract.split('/')[1]
                                     trade = trade_bucket(contract=_eachcontract, size=size)
                                     ibpy(size, contractString)
-
                                     # msg = constants.zmq_sell_filter + ' ' + _eachcontract
                                     # self.publish_to_zmq(msg)
                                 else:
                                     print('Not trading %s at this point in time.' % _eachcontract)
 
-            #            print('sleeping')
             time.sleep(30)
             # time.sleep(10.0 - ((time.time() - self.stime) % 10.0))
 

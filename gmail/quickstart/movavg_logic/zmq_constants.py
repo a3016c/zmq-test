@@ -13,10 +13,11 @@ class constants():
         self.host = 'localhost'
         self.account = 'DU1314277'
         self.port = 7496
-        self.allowed_contracts = ['/MES', '/ES', '/NQ', '/MNQ', '/YM', '/MYM', '/RTY', '/M2K']#, '/CL', '/QM', '/6E',
+        self.allowed_contracts = ['/ES', '/NQ', '/YM', '/RTY']#, '/CL', '/QM', '/6E',
                                   #'/6A']
         self.expiry = 201909
         self.tda_ib_pair = {'/MES':'MES',
                             '/ES':'ES',
                             '/NQ':'NQ',
                             '/MNQ':'MNQ'}
+        self.exchange_combination = {'NQ':'GLOBEX','ES':'GLOBEX','YM':'GLOBEX','RTY':'GLOBEX'}
