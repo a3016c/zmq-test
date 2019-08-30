@@ -40,7 +40,9 @@ def ibpy(size, contractString):
 
         if check_active_position(ibConn, symbol_string):
             position_size = get_position_size(ibConn, symbol_string)
-            new_size = - position_size * 2
+            order = ibConn.createOrder(quantity=-new_size)
+            orderId = ibConn.placeOrder(contract, order)
+            time.sleep(3)
 
         order = ibConn.createOrder(quantity=new_size)
         orderId = ibConn.placeOrder(contract, order)

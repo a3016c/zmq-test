@@ -4,3 +4,5 @@ json
 time
 numpy
 apiclientp
+oauth2client
+regex
