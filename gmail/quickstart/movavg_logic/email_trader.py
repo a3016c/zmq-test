@@ -180,13 +180,13 @@ def main():
 
 
 if __name__ == '__main__':
-    format = "%(asctime)s: %(message)s"
-    logger = logging.getLogger(__name__)
-    logging.basicConfig(format=format, level=logging.INFO, datefmt='%D : %H-%M-%S')
+    format = "%(asctime)s %(levelname)s : %(message)s"
+    logging.basicConfig(format=format, level=logging.DEBUG, datefmt='%D : %H-%M-%S',
+                        filename='email_trader_ib.log',filemode='w')
     logging.info("Main : before creating thread")
-    log = RotatingFileHandler(filename='email_trader_ib.log', mode='a', maxBytes=5 * 1024 * 1024,
-                              backupCount=1, encoding=None, delay=0)
-    log.setLevel(logging.INFO)
-    logger.addHandler(log)
+    #log = RotatingFileHandler(filename='email_trader_ib.log', mode='a', maxBytes=5 * 1024 * 1024,
+    #                         backupCount=1, encoding=None, delay=0)
+    logger = logging.getLogger(__name__)
+    #logger.addHandler(log)
 
     main()
