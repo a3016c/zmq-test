@@ -9,8 +9,11 @@ from apiclient import errors, discovery
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-
 import zmq_constants
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 # If modifying these scopes, delete the file token.pickle.
 #SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
@@ -37,7 +40,7 @@ class read_unread_mail():
             # print('Message ID: %s - Marked as read.' % (msg_id))
             return message
         except errors.HttpError as error:
-            print('An error occurred: %s' % error)
+            logger.debug('An error occurred: %s' % error)
             return None
 
     def read(self):
@@ -87,7 +90,7 @@ class read_unread_mail():
                                                              body=msg_labels).execute()
             # print('Message ID: %s - Marked as read.' % (msg_id))
         except errors.HttpError as error:
-            print('An error occurred: %s' % error)
+            logger.debug('An error occurred: %s' % error)
             return None
 
         return msg_body

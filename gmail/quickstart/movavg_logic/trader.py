@@ -1,8 +1,10 @@
 import ezibpy
 import time
 from qtpylib import futures
-
+import logging
 import zmq_constants
+
+logger = logging.getLogger(__name__)
 
 constants = zmq_constants.constants()
 size = constants.standard_size
@@ -54,7 +56,7 @@ def ibpy(size, contractString):
             time.sleep(3)
         else:
             # We are already in position
-            print('Already in position for %s, position_size: %s' % (symbol_string, position_size))
+            logger.warning('Already in position for %s, position_size: %s' % (symbol_string, position_size))
         # subscribe to account/position updates
         # ibConn.requestPositionUpdates(subscribe=False)
         # ibConn.requestAccountUpdates(subscribe=False)
@@ -63,8 +65,8 @@ def ibpy(size, contractString):
         ibConn.disconnect()
         time.sleep(2)
     except Exception as e:
-        print('Exception occurred.')
-        print(e)
+        logger.debug('Exception occurred.')
+        logger.debug(e)
         return False
 
     return True
@@ -75,9 +77,9 @@ def check_active_position(ibConn, symbol_string):
         # e.g. sym value GCQ2019_FUT
         # print(sym, '****', value['position'])
         if symbol_string == sym and value['position'] != 0:
-            print('Open Positions for %s : %s' % (sym, value['position']))
+            logger.info('Open Positions for %s : %s' % (sym, value['position']))
             return True
-    print('No active positions for %s' % symbol_string)
+    logger.warning('No active positions for %s' % symbol_string)
     return False
 
 

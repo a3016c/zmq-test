@@ -3,17 +3,18 @@ import regex as re
 import sys
 import time
 import zmq
-import logging
 from trader import ibpy
-
+import logging
+from logging.handlers import RotatingFileHandler
 import zmq_constants
 from read_email import read_unread_mail
-logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.WARNING)
+#logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.WARNING)
 
 # our local zeromq endpoints
 zmq_events_addr = 'tcp://127.0.0.1:8008'
 zmq_buy_filter = 'BUY'
 zmq_sell_filter = 'SELL'
+
 
 
 class server():
@@ -84,7 +85,7 @@ class server():
                                     # msg = constants.zmq_sell_filter + ' ' + _eachcontract
                                     # self.publish_to_zmq(msg)
                                 else:
-                                    print('Not trading %s at this point in time.' % _eachcontract)
+                                    logger.warning('Not trading %s at this point in time.' % _eachcontract)
 
             time.sleep(30)
             # time.sleep(10.0 - ((time.time() - self.stime) % 10.0))
@@ -119,9 +120,9 @@ def main():
         while True:
             try:
                 s = sock.recv_string()
-                print('Trade:', s.split()[1].split('/')[1])
+                logger.info('Trade:', s.split()[1].split('/')[1])
             except KeyboardInterrupt as e:
-                print('Keyboard Interrupted.')
+                logger.debug('Keyboard Interrupted.')
                 sys.exit(1)
 
     # Buy side client
@@ -140,10 +141,10 @@ def main():
                 s = sock.recv_string()
                 size = (int(zmq_constants.constants().standard_size))
                 contractString = s.split()[1].split('/')[1]
-                print('Trade %s %s' % (size, contractString))
+                logger.info('Trade %s %s' % (size, contractString))
                 ibpy(size, contractString)
             except KeyboardInterrupt as e:
-                print('Keyboard Interrupted.')
+                logger.debug('Keyboard Interrupted.')
                 sys.exit(1)
 
     # Sell side client
@@ -162,10 +163,10 @@ def main():
                 s = sock.recv_string()
                 size = (0 - int(zmq_constants.constants().standard_size))
                 contractString = s.split()[1].split('/')[1]
-                print('Trade %s %s' % (size, contractString))
+                logger.info('Trade %s %s' % (size, contractString))
                 ibpy(size, contractString)
             except KeyboardInterrupt as e:
-                print('Keyboard Interrupted.')
+                logger.debug('Keyboard Interrupted.')
                 sys.exit(1)
 
     if args.server:
@@ -174,9 +175,18 @@ def main():
             srv = server(args.server, zmq_constants.constants().zmq_events_addr)
             srv.readmail()
         except KeyboardInterrupt as e:
-            print('Keyboard Interrupted.')
+            logger.debug('Keyboard Interrupted.')
             sys.exit(1)
 
 
 if __name__ == '__main__':
+    format = "%(asctime)s: %(message)s"
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(format=format, level=logging.INFO, datefmt='%D : %H-%M-%S')
+    logging.info("Main : before creating thread")
+    log = RotatingFileHandler(filename='email_trader_ib.log', mode='a', maxBytes=5 * 1024 * 1024,
+                              backupCount=1, encoding=None, delay=0)
+    log.setLevel(logging.INFO)
+    logger.addHandler(log)
+
     main()
