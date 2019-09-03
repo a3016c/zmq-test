@@ -64,7 +64,7 @@ class server():
                     contract_list = regex.findall(msg_body)  # example ['/MES','/CL','/6E']
 
                     if constants.msg_scope in msg_body:
-                        if constants.BUY_SEARCH in msg_body:
+                        if constants.BUY_SEARCH in msg_body or constants.SELL_REMOVED in msg_body:
                             for _eachcontract in contract_list:
                                 if _eachcontract in constants.allowed_contracts:
                                     size = int(zmq_constants.constants().standard_size)
@@ -75,7 +75,7 @@ class server():
                                     # self.publish_to_zmq(msg)
                                 else:
                                     print('Not trading %s at this point in time.' % _eachcontract)
-                        elif constants.SELL_SEARCH in msg_body:
+                        elif constants.SELL_SEARCH in msg_body or constants.BUY_REMOVED in msg_body:
                             for _eachcontract in contract_list:
                                 if _eachcontract in constants.allowed_contracts:
                                     size = (0 - int(zmq_constants.constants().standard_size))

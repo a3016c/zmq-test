@@ -7,6 +7,8 @@ class constants():
         self.zmq_events_addr = 'tcp://127.0.0.1:8008'
         self.BUY_SEARCH = 'added to 2Mov2Lines_buy'
         self.SELL_SEARCH = 'added to 2Mov2Lines_Sell'
+        self.SELL_REMOVED = 'removed from 2Mov2Lines_Sell'
+        self.BUY_REMOVED = 'removed from 2Mov2Lines_buy'
         self.unread_message = 'UNREAD'
         self.client_id = 3016
         self.standard_size = 1
